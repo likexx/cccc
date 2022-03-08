@@ -15,5 +15,6 @@ message HelloReply {
 
 service ddd {
     rpc SayHello (HelloRequest) returns (HelloReply);
+    rpc Test2 (HelloRequest) returns (HelloReply);
 }
 
