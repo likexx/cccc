@@ -17,5 +17,6 @@ service ddd {
     rpc SayHello (HelloRequest) returns (HelloReply);
     rpc Test2 (HelloRequest) returns (HelloReply);
     rpc Test3 (HelloRequest) returns (HelloReply);
+    rpc Test4 (HelloRequest) returns (HelloReply);
 }
 
