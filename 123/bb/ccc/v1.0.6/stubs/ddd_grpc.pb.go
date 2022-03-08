@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type DddClient interface {
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 	Test2(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
+	Test3(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 }
 
 type dddClient struct {
@@ -48,12 +49,22 @@ func (c *dddClient) Test2(ctx context.Context, in *HelloRequest, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *dddClient) Test3(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) {
+	out := new(HelloReply)
+	err := c.cc.Invoke(ctx, "/bb.ccc.ddd/Test3", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DddServer is the server API for Ddd service.
 // All implementations must embed UnimplementedDddServer
 // for forward compatibility
 type DddServer interface {
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 	Test2(context.Context, *HelloRequest) (*HelloReply, error)
+	Test3(context.Context, *HelloRequest) (*HelloReply, error)
 	mustEmbedUnimplementedDddServer()
 }
 
@@ -66,6 +77,9 @@ func (UnimplementedDddServer) SayHello(context.Context, *HelloRequest) (*HelloRe
 }
 func (UnimplementedDddServer) Test2(context.Context, *HelloRequest) (*HelloReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Test2 not implemented")
+}
+func (UnimplementedDddServer) Test3(context.Context, *HelloRequest) (*HelloReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Test3 not implemented")
 }
 func (UnimplementedDddServer) mustEmbedUnimplementedDddServer() {}
 
@@ -116,6 +130,24 @@ func _Ddd_Test2_Handler(srv interface{}, ctx context.Context, dec func(interface
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Ddd_Test3_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HelloRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DddServer).Test3(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bb.ccc.ddd/Test3",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DddServer).Test3(ctx, req.(*HelloRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Ddd_ServiceDesc is the grpc.ServiceDesc for Ddd service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +162,10 @@ var Ddd_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Test2",
 			Handler:    _Ddd_Test2_Handler,
+		},
+		{
+			MethodName: "Test3",
+			Handler:    _Ddd_Test3_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
