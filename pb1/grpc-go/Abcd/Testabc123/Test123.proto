@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package Abcd.Testabc123;
+
+option go_package="github.com/likexx/cccc/pb1/grpc-go/Abcd/Testabc123";
+
+
+service Test123 {
+    rpc SayHello (HelloRequest) returns (HelloReply);
+}
+
+
+message HelloRequest {
+    string msg = 1;
+}
+message HelloReply {
+    string msg = 1;
+    string code = 2;
+}
